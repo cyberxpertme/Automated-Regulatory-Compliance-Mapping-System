@@ -380,6 +380,8 @@ Server verifies token on protected routes
 ### ✅ Phase 4 — NLP Engine
 **Status:** ✅ Done
 
+
+
 **What we did:**
 - Installed spaCy NLP library
 - Downloaded English language model (en_core_web_sm)

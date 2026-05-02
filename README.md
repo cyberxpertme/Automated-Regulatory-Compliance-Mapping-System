@@ -53,18 +53,33 @@ Confidence Score: 95%
 | 🐳 Docker Ready | One command runs everything |
 
 ---
-### Architecture Diagram
+## 🏗️ System Architecture
 ```text
-|Frontend
-   ↓
-|FastAPI
-   ↓
-|NLP Engine
-   ↓
-|Mapping Engine
-   ↓
-|PostgreSQL
+Frontend (React)
+        ↓
+FastAPI Backend
+        ↓
+Authentication (JWT + RBAC)
+        ↓
+NLP Engine
+        ↓
+Mapping Engine
+        ↓
+PostgreSQL Database
+        ↓
+Analytics Dashboard
 ```
+---
+
+## 🚀 Key Innovations
+
+1. AI-assisted compliance mapping
+2. NLP-based regulatory clause extraction
+3. Multi-framework governance analytics
+4. Role-Based Access Control (RBAC)
+5. Dockerized deployment architecture
+6. Compliance confidence scoring engine
+
 ---
 ## 🏗️ Tech Stack
 
@@ -485,7 +500,16 @@ npm run dev
 - What CORS is and why browsers enforce it
 
 ---
+## 🧪 Demo Workflow
 
+User uploads compliance framework or policy document
+NLP engine extracts regulatory clauses and keywords
+Mapping engine analyzes framework relationships
+Confidence scores are generated for mappings
+Compliance analytics are visualized in the dashboard
+RBAC-enabled users can review governance insights
+
+---
 ### ✅ Phase 7 — Docker Deployment
 **Status:** ✅ Done
 
@@ -549,6 +573,17 @@ Visit http://localhost:5174
 
 ## 📄 License
 MIT License — see LICENSE file for details.
+
+---
+## ©️ Copyright
+
+© 2026 Nahid Chowdhury & Shible Sadiqe
+
+All rights reserved.
+
+This project was developed as part of an advanced cybersecurity governance and compliance automation research initiative under PMICS, University of Dhaka.
+
+Unauthorized commercial redistribution or replication without permission is prohibited.
 
 ---
 

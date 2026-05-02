@@ -54,6 +54,7 @@ Confidence Score: 95%
 
 ---
 ### Architecture Diagram
+```text
 |Frontend
    ↓
 |FastAPI
@@ -63,7 +64,7 @@ Confidence Score: 95%
 |Mapping Engine
    ↓
 |PostgreSQL
-
+```
 ---
 ## 🏗️ Tech Stack
 

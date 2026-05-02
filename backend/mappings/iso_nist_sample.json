@@ -1,0 +1,112 @@
+{
+  "ISO_27001_A.5.1": {
+    "source_framework": "ISO_27001",
+    "source_control_id": "A.5.1",
+    "source_control_title": "Policies for information security",
+    "source_control_text": "A set of policies for information security shall be defined, approved by management.",
+    "target_framework": "NIST_CSF",
+    "target_control_id": "GV.PO-01",
+    "target_control_title": "Organizational cybersecurity policy is established",
+    "confidence_score": 0.95,
+    "gap_description": null
+  },
+  "ISO_27001_A.5.2": {
+    "source_framework": "ISO_27001",
+    "source_control_id": "A.5.2",
+    "source_control_title": "Information security roles and responsibilities",
+    "source_control_text": "All information security responsibilities shall be defined and allocated.",
+    "target_framework": "NIST_CSF",
+    "target_control_id": "GV.RR-02",
+    "target_control_title": "Roles and responsibilities for cybersecurity risk management",
+    "confidence_score": 0.90,
+    "gap_description": null
+  },
+  "ISO_27001_A.6.1": {
+    "source_framework": "ISO_27001",
+    "source_control_id": "A.6.1",
+    "source_control_title": "Screening",
+    "source_control_text": "Background verification checks on all candidates for employment shall be carried out.",
+    "target_framework": "NIST_CSF",
+    "target_control_id": "PR.AA-01",
+    "target_control_title": "Identities and credentials for authorized users are managed",
+    "confidence_score": 0.72,
+    "gap_description": "Partial coverage — screening is broader than credential management"
+  },
+  "ISO_27001_A.8.1": {
+    "source_framework": "ISO_27001",
+    "source_control_id": "A.8.1",
+    "source_control_title": "User endpoint devices",
+    "source_control_text": "Information stored on or accessible via user endpoint devices shall be protected.",
+    "target_framework": "NIST_CSF",
+    "target_control_id": "PR.PS-01",
+    "target_control_title": "Configuration management practices are established",
+    "confidence_score": 0.85,
+    "gap_description": null
+  },
+  "ISO_27001_A.8.2": {
+    "source_framework": "ISO_27001",
+    "source_control_id": "A.8.2",
+    "source_control_title": "Privileged access rights",
+    "source_control_text": "The allocation and use of privileged access rights shall be restricted and managed.",
+    "target_framework": "NIST_CSF",
+    "target_control_id": "PR.AA-05",
+    "target_control_title": "Access permissions and authorizations are managed",
+    "confidence_score": 0.93,
+    "gap_description": null
+  },
+  "ISO_27001_A.8.3": {
+    "source_framework": "ISO_27001",
+    "source_control_id": "A.8.3",
+    "source_control_title": "Information access restriction",
+    "source_control_text": "Access to information and application system functions shall be restricted.",
+    "target_framework": "NIST_CSF",
+    "target_control_id": "PR.AA-03",
+    "target_control_title": "Users, services, and hardware are authenticated",
+    "confidence_score": 0.88,
+    "gap_description": null
+  },
+  "ISO_27001_A.8.4": {
+    "source_framework": "ISO_27001",
+    "source_control_id": "A.8.4",
+    "source_control_title": "Access to source code",
+    "source_control_text": "Read and write access to source code shall be appropriately managed.",
+    "target_framework": "NIST_CSF",
+    "target_control_id": "PR.DS-01",
+    "target_control_title": "The confidentiality and integrity of data-at-rest are protected",
+    "confidence_score": 0.78,
+    "gap_description": "Partial — source code is a specific type of data at rest"
+  },
+  "ISO_27001_A.8.5": {
+    "source_framework": "ISO_27001",
+    "source_control_id": "A.8.5",
+    "source_control_title": "Secure authentication",
+    "source_control_text": "Secure authentication technologies and procedures shall be implemented.",
+    "target_framework": "NIST_CSF",
+    "target_control_id": "PR.AA-03",
+    "target_control_title": "Users, services, and hardware are authenticated",
+    "confidence_score": 0.97,
+    "gap_description": null
+  },
+  "ISO_27001_A.8.6": {
+    "source_framework": "ISO_27001",
+    "source_control_id": "A.8.6",
+    "source_control_title": "Capacity management",
+    "source_control_text": "The use of resources shall be monitored and adjusted in line with capacity requirements.",
+    "target_framework": "NIST_CSF",
+    "target_control_id": "PR.PS-04",
+    "target_control_title": "Log records are generated to enable monitoring",
+    "confidence_score": 0.70,
+    "gap_description": "Partial — capacity management is broader than log monitoring"
+  },
+  "ISO_27001_A.8.7": {
+    "source_framework": "ISO_27001",
+    "source_control_id": "A.8.7",
+    "source_control_title": "Protection against malware",
+    "source_control_text": "Protection against malware shall be implemented and supported by appropriate user awareness.",
+    "target_framework": "NIST_CSF",
+    "target_control_id": "DE.CM-09",
+    "target_control_title": "Computing hardware and software are monitored",
+    "confidence_score": 0.91,
+    "gap_description": null
+  }
+}

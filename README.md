@@ -1,3 +1,32 @@
+cat >> README.md << 'EOF'
+
+---
+
+### ✅ Phase 6 — React Frontend Dashboard
+**Status:** ✅ Done
+
+**What I did:**
+- Created React 18 + Vite frontend
+- Built 3-tab dashboard: Dashboard, Mappings, NLP Engine
+- Dashboard shows stats cards and charts
+- Connected frontend to FastAPI backend
+- Fixed CORS issues
+
+---
+
+### ✅ Phase 7 — Docker Full Deployment
+**Status:** ✅ Done
+
+**What I did:**
+- Created Dockerfile for backend
+- Created Dockerfile for frontend
+- Updated docker-compose setup
+- Full project deployment with one command
+
+**Command to run everything:**
+
+```bash
+docker-compose up --build
 
 # 🛡️ Automated Regulatory Compliance Mapping System
 
@@ -209,3 +238,254 @@ _(This section will be updated as the project grows)_
 - What confidence scoring means in compliance
 - What gap analysis means
 - How JSON data becomes API responses
+
+---
+
+### ✅ Phase 6 — React Frontend Dashboard
+**Status:** ✅ Done
+
+**What I did:**
+- Created React 18 + Vite frontend
+- Built 3-tab dashboard: Dashboard, Mappings, NLP Engine
+- Dashboard shows 4 stats cards + 2 charts (Pie + Bar)
+- Mappings tab shows ISO 27001 to NIST CSF table with confidence badges
+- NLP Engine tab runs live clause extraction demo
+- Connected frontend to FastAPI backend via axios
+- Fixed CORS to allow frontend-backend communication
+
+**Commands I ran:**
+````bash
+npm create vite@latest frontend -- --template react
+npm install axios recharts
+npm run dev
+\```
+
+**What I learned:**
+- How React hooks (useState, useEffect) work
+- How axios connects frontend to backend API
+- How Recharts builds charts from API data
+- What CORS is and why it matters
+
+---
+
+## 🗂️ Final Folder Structure
+
+\```
+compliance-mapper/
+├── README.md                     ← project diary ✅
+├── .gitignore                    ← secrets protected ✅
+├── LICENSE                       ← MIT open source ✅
+├── docker-compose.yml            ← PostgreSQL + Redis ✅
+├── backend/
+│   ├── main.py                   ← FastAPI entry point ✅
+│   ├── .env                      ← environment variables ✅
+│   ├── requirements.txt          ← python dependencies ✅
+│   ├── models/
+│   │   ├── database.py           ← SQLAlchemy connection ✅
+│   │   ├── user.py               ← User model + RBAC ✅
+│   │   └── compliance.py         ← Mapping model ✅
+│   ├── routes/
+│   │   ├── auth.py               ← JWT authentication ✅
+│   │   ├── mapping.py            ← Mapping engine API ✅
+│   │   └── nlp_routes.py         ← NLP endpoints ✅
+│   ├── nlp/
+│   │   └── extractor.py          ← spaCy clause extractor ✅
+│   └── mappings/
+│       └── iso_nist_sample.json  ← ISO 27001 to NIST data ✅
+└── frontend/
+    ├── src/
+    │   ├── App.jsx               ← Main dashboard ✅
+    │   └── index.css             ← Global styles ✅
+    └── package.json              ← Node dependencies ✅
+\```
+
+---
+
+## 🚀 How to Run (Full Setup)
+
+\```bash
+git clone https://github.com/cyberxpertme/Automated-Regulatory-Compliance-Mapping-System.git
+cd Automated-Regulatory-Compliance-Mapping-System
+
+# Start database
+docker-compose up -d
+
+# Start backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r backend/requirements.txt
+python -m spacy download en_core_web_sm
+cd backend && uvicorn main:app --reload --port 8001
+
+# Start frontend (new terminal)
+cd frontend
+npm install
+npm run dev
+\```
+
+| Service | URL |
+|---------|-----|
+| Frontend Dashboard | http://localhost:5174 |
+| API Documentation | http://localhost:8001/docs |
+| Health Check | http://localhost:8001/health |
+
+---
+
+## 📊 Project Summary
+
+| Phase | Feature | Status |
+|-------|---------|--------|
+| 0 | Git + GitHub Setup | ✅ |
+| 1 | FastAPI Backend | ✅ |
+| 2 | PostgreSQL Database | ✅ |
+| 3 | JWT Authentication + RBAC | ✅ |
+| 4 | NLP Clause Extraction | ✅ |
+| 5 | ISO 27001 → NIST CSF Mapping | ✅ |
+| 6 | React Dashboard | ✅ |
+| 7 | Docker Deployment | ⏳ Next |
+
+---
+
+### ✅ Phase 6 — React Frontend Dashboard
+**Status:** ✅ Done
+
+**What I did:**
+- Created React 18 + Vite frontend
+- Built 3-tab dashboard: Dashboard, Mappings, NLP Engine
+- Dashboard shows 4 stats cards + 2 charts (Pie + Bar)
+- Mappings tab shows ISO 27001 to NIST CSF table with confidence badges
+- NLP Engine tab runs live clause extraction demo
+- Connected frontend to FastAPI backend via axios
+- Fixed CORS to allow frontend-backend communication
+
+**Commands I ran:**
+````bash
+npm create vite@latest frontend -- --template react
+npm install axios recharts
+npm run dev
+\```
+
+**What I learned:**
+- How React hooks (useState, useEffect) work
+- How axios connects frontend to backend API
+- How Recharts builds charts from API data
+- What CORS is and why it matters
+
+---
+
+## 🗂️ Final Folder Structure
+
+\```
+compliance-mapper/
+├── README.md                     ← project diary ✅
+├── .gitignore                    ← secrets protected ✅
+├── LICENSE                       ← MIT open source ✅
+├── docker-compose.yml            ← PostgreSQL + Redis ✅
+├── backend/
+│   ├── main.py                   ← FastAPI entry point ✅
+│   ├── .env                      ← environment variables ✅
+│   ├── requirements.txt          ← python dependencies ✅
+│   ├── models/
+│   │   ├── database.py           ← SQLAlchemy connection ✅
+│   │   ├── user.py               ← User model + RBAC ✅
+│   │   └── compliance.py         ← Mapping model ✅
+│   ├── routes/
+│   │   ├── auth.py               ← JWT authentication ✅
+│   │   ├── mapping.py            ← Mapping engine API ✅
+│   │   └── nlp_routes.py         ← NLP endpoints ✅
+│   ├── nlp/
+│   │   └── extractor.py          ← spaCy clause extractor ✅
+│   └── mappings/
+│       └── iso_nist_sample.json  ← ISO 27001 to NIST data ✅
+└── frontend/
+    ├── src/
+    │   ├── App.jsx               ← Main dashboard ✅
+    │   └── index.css             ← Global styles ✅
+    └── package.json              ← Node dependencies ✅
+\```
+
+---
+
+## 🚀 How to Run (Full Setup)
+
+\```bash
+git clone https://github.com/cyberxpertme/Automated-Regulatory-Compliance-Mapping-System.git
+cd Automated-Regulatory-Compliance-Mapping-System
+
+# Start database
+docker-compose up -d
+
+# Start backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r backend/requirements.txt
+python -m spacy download en_core_web_sm
+cd backend && uvicorn main:app --reload --port 8001
+
+# Start frontend (new terminal)
+cd frontend
+npm install
+npm run dev
+\```
+
+| Service | URL |
+|---------|-----|
+| Frontend Dashboard | http://localhost:5174 |
+| API Documentation | http://localhost:8001/docs |
+| Health Check | http://localhost:8001/health |
+
+---
+
+## 📊 Project Summary
+
+| Phase | Feature | Status |
+|-------|---------|--------|
+| 0 | Git + GitHub Setup | ✅ |
+| 1 | FastAPI Backend | ✅ |
+| 2 | PostgreSQL Database | ✅ |
+| 3 | JWT Authentication + RBAC | ✅ |
+| 4 | NLP Clause Extraction | ✅ |
+| 5 | ISO 27001 → NIST CSF Mapping | ✅ |
+| 6 | React Dashboard | ✅ |
+| 7 | Docker Deployment | ⏳ Next |
+
+---
+
+### ✅ Phase 6 — React Frontend Dashboard
+**Status:** ✅ Done
+
+**What I did:**
+- Created React 18 + Vite frontend
+- Built 3-tab dashboard: Dashboard, Mappings, NLP Engine
+- Connected frontend to FastAPI backend
+- Added charts and dashboard statistics
+- Fixed CORS issues
+
+---
+
+### ✅ Phase 7 — Docker Full Deployment
+**Status:** ✅ Done
+
+**What I did:**
+- Created Dockerfile for backend
+- Created Dockerfile for frontend
+- Updated docker-compose setup
+- Full deployment ready with one command
+
+**Run project:**
+
+docker-compose up --build
+
+---
+
+## 🎉 Project Complete!
+
+| URL | Service |
+|-----|---------|
+| http://localhost:5174 | React Dashboard |
+| http://localhost:8001/docs | API Swagger UI |
+| http://localhost:8001/health | Health Check |
+
+GitHub:
+https://github.com/cyberxpertme/Automated-Regulatory-Compliance-Mapping-System
+

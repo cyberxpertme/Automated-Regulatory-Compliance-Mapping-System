@@ -173,3 +173,39 @@ _(This section will be updated as the project grows)_
 - How spaCy NLP library works
 - What sentence segmentation means
 - How confidence scoring works in NLP
+
+---
+
+### ✅ Phase 5 — Mapping Engine
+**Status:** ✅ Done
+
+**What I did:**
+- Created ISO 27001 to NIST CSF mapping data (10 controls)
+- Built mapping API with stats and search endpoints
+- Confidence scoring for each mapping (0.0 to 1.0)
+- Gap analysis — full vs partial coverage identified
+- Database seeding endpoint built
+- Tested all endpoints with Swagger UI
+
+**API Endpoints added:**
+
+| Endpoint | What it does |
+|----------|-------------|
+| GET /mapping/sample | Get all ISO to NIST mappings |
+| GET /mapping/stats | Compliance statistics |
+| GET /mapping/search/{id} | Search specific control |
+| POST /mapping/seed-db | Save mappings to database |
+| GET /mapping/from-db | Get mappings from database |
+
+**Sample Result from /mapping/stats:**
+- Total Controls: 10
+- Full Coverage: 7
+- Partial Coverage: 3
+- Coverage: 70%
+- Avg Confidence: 85.9%
+
+**What I learned:**
+- How rule-based mapping engines work
+- What confidence scoring means in compliance
+- What gap analysis means
+- How JSON data becomes API responses

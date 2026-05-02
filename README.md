@@ -79,41 +79,38 @@ Confidence Score: 95%
 | Deploy | Docker + Docker Compose | Consistent deployment |
 
 ---
-</> Markdown
 ## 📂 Project Structure
-compliance-mapper/
-├── README.md                     ← You are here
-├── .gitignore                    ← Files git ignores
-├── LICENSE                       ← MIT License
-├── docker-compose.yml            ← All services config
-│
-├── backend/                      ← Python FastAPI server
-│   ├── main.py                   ← App entry point
-│   ├── .env                      ← Environment variables (not in git)
-│   ├── requirements.txt          ← Python dependencies
-│   │
-│   ├── models/                   ← Database models
-│   │   ├── database.py           ← SQLAlchemy connection setup
-│   │   ├── user.py               ← User model with RBAC roles
-│   │   └── compliance.py         ← Control mapping model
-│   │
-│   ├── routes/                   ← API endpoints
-│   │   ├── auth.py               ← Register, Login, Me
-│   │   ├── mapping.py            ← Compliance mapping API
-│   │   └── nlp_routes.py         ← NLP extraction API
-│   │
-│   ├── nlp/
-│   │   └── extractor.py          ← spaCy clause extractor
-│   │
-│   └── mappings/
-│       └── iso_nist_sample.json  ← ISO 27001 to NIST CSF data
-│
-└── frontend/                     ← React dashboard
-├── src/
-│   ├── App.jsx               ← Main dashboard component
-│   └── index.css             ← Global styles
-└── package.json              ← Node dependencies
 
+```text
+compliance-mapper/
+├── backend/
+│   ├── main.py
+│   ├── requirements.txt
+│   ├── models/
+│   │   ├── database.py
+│   │   ├── user.py
+│   │   └── compliance.py
+│   ├── routes/
+│   │   ├── auth.py
+│   │   ├── mapping.py
+│   │   └── nlp_routes.py
+│   ├── mappings/
+│   │   └── iso_nist_sample.json
+│   └── nlp/
+│       └── extractor.py
+│
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   ├── pages/
+│   │   └── components/
+│   └── package.json
+│
+├── docker-compose.yml
+├── README.md
+└── LICENSE
+```
 ---
 
 ## 🚀 Quick Start (5 minutes)

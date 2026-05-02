@@ -25,6 +25,11 @@ Organizations struggle to **manually map** cybersecurity regulations across mult
 
 This system **automates** that process using NLP + rule-based engine.
 
+## Why This Project?
+
+Organizations often struggle to manually map compliance controls across multiple cybersecurity frameworks such as ISO 27001 and NIST CSF. This platform automates regulatory mapping and compliance analytics using NLP and rule-based intelligence.
+
+
 **Real Example:**
 ISO 27001 Control A.5.1
 "A set of policies for information security shall be defined..."
@@ -48,7 +53,18 @@ Confidence Score: 95%
 | 🐳 Docker Ready | One command runs everything |
 
 ---
+### Architecture Diagram
+|Frontend
+   ↓
+|FastAPI
+   ↓
+|NLP Engine
+   ↓
+|Mapping Engine
+   ↓
+|PostgreSQL
 
+---
 ## 🏗️ Tech Stack
 
 | Layer | Technology | Why |
@@ -63,7 +79,7 @@ Confidence Score: 95%
 | Deploy | Docker + Docker Compose | Consistent deployment |
 
 ---
-
+</> Markdown
 ## 📂 Project Structure
 compliance-mapper/
 ├── README.md                     ← You are here
@@ -173,6 +189,13 @@ npm run dev
 1. Go to http://localhost:8001/docs
 2. Click any endpoint → "Try it out" → "Execute"
 3. For protected routes: first login → copy token → click "Authorize"
+
+###API Example
+{
+  "source_control": "A.5.15",
+  "target_control": "PR.AC",
+  "confidence": 0.94
+}
 
 ---
 
@@ -508,6 +531,10 @@ Visit http://localhost:5174
 - [ ] PDF compliance report export
 - [ ] Real-time monitoring dashboard
 - [ ] SIEM integration
+- [ ] AI semantic mapping
+- [ ]PDF ingestion
+- [ ]Multi-tenant governance
+- [ ]Risk scoring
 
 ---
 

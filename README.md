@@ -7,7 +7,7 @@
 |---|---|
 | 👤 Student 1 | Md Shible Sadiqe — H-411 |
 | 👤 Student 2 | Md Nahid Chowdhury — H-392 |
-| 🎓 Supervisor |  |
+| 🎓 Supervisor | Prof. Abu Ahmed Ferdous |
 | 📅 Started | June 2025 |
 
 ---

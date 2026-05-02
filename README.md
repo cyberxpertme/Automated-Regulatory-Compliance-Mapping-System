@@ -289,6 +289,8 @@ git push -u origin main
 
 ### ✅ Phase 1 — Backend Foundation
 **Status:** ✅ Done
+<img width="1756" height="992" alt="BackEnd" src="https://github.com/user-attachments/assets/96b100ea-05a1-491d-af28-dbd7fe8376dc" />
+
 
 **What we did:**
 - Created backend folder structure
@@ -380,6 +382,7 @@ Server verifies token on protected routes
 ### ✅ Phase 4 — NLP Engine
 **Status:** ✅ Done
 
+<img width="1756" height="992" alt="Nlp Engine" src="https://github.com/user-attachments/assets/fc1f57bd-e1f9-44cf-b9c3-0fbf8020ef77" />
 
 
 **What we did:**
@@ -419,6 +422,9 @@ Output: {clause_id, text, keywords, confidence: 0.60}
 ### ✅ Phase 5 — Mapping Engine
 **Status:** ✅ Done
 
+<img width="1756" height="992" alt="Mapping" src="https://github.com/user-attachments/assets/7ad41e57-78e3-466f-bfbb-aa557b19c3a8" />
+
+
 **What we did:**
 - Created ISO 27001 to NIST CSF mapping data (10 controls)
 - Each mapping has: source control, target control, confidence score, gap description
@@ -451,6 +457,9 @@ Output: {clause_id, text, keywords, confidence: 0.60}
 
 ### ✅ Phase 6 — React Frontend Dashboard
 **Status:** ✅ Done
+
+<img width="1756" height="992" alt="DashBoard" src="https://github.com/user-attachments/assets/b6ebbb8f-511a-42a1-9427-8b93b006fe02" />
+
 
 **What we did:**
 - Created React 18 + Vite frontend project

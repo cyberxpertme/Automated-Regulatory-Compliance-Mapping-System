@@ -1,4 +1,4 @@
-cat > README.md << 'EOF'
+
 # 🛡️ Automated Regulatory Compliance Mapping System
 
 > **PMICS Project | CSE-811 | University of Dhaka | Batch 4**

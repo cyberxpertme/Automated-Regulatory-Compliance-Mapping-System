@@ -124,3 +124,52 @@ git remote add origin https://github.com/YOUR_USERNAME/compliance-mapper.git
 ## 🗂️ Folder Structure
 
 _(This section will be updated as the project grows)_
+
+---
+
+### ✅ Phase 3 — Authentication (JWT + RBAC)
+**Status:** ✅ Done
+
+**What I did:**
+- Implemented JWT token based authentication
+- Built register, login, and me endpoints
+- Created 3 user roles: admin, auditor, viewer
+- Passwords hashed with bcrypt
+- Protected routes with token verification
+
+**API Endpoints added:**
+
+| Endpoint | What it does |
+|----------|-------------|
+| POST /auth/register | Create new user with role |
+| POST /auth/login | Login, receive JWT token |
+| GET /auth/me | Get current logged in user |
+
+**What I learned:**
+- How JWT tokens are created and verified
+- What bcrypt password hashing does
+- What RBAC means
+
+---
+
+### ✅ Phase 4 — NLP Engine
+**Status:** ✅ Done
+
+**What I did:**
+- Installed spaCy NLP library
+- Built clause extractor using keyword matching
+- Extracts compliance controls from ISO 27001 text
+- Each clause gets a confidence score
+- Built demo endpoint with sample ISO 27001 text
+
+**API Endpoints added:**
+
+| Endpoint | What it does |
+|----------|-------------|
+| POST /nlp/extract | Extract clauses from any text |
+| GET /nlp/demo | Run demo on ISO 27001 sample |
+
+**What I learned:**
+- How spaCy NLP library works
+- What sentence segmentation means
+- How confidence scoring works in NLP

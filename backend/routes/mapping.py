@@ -1,3 +1,5 @@
+# mapping.py - Complete mapping engine with real ISO 27001 data
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from models.database import get_db
@@ -9,9 +11,8 @@ import os
 
 router = APIRouter(prefix="/mapping", tags=["Compliance Mapping"])
 
-# Fix: absolute path to JSON file
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MAPPING_FILE = os.path.join(BASE_DIR, "mappings", "iso_nist_sample.json")
+MAPPING_FILE = os.path.join(BASE_DIR, "mappings", "complete_iso_nist_mapping.json")
 
 def load_mappings():
     with open(MAPPING_FILE, "r") as f:
@@ -34,12 +35,31 @@ def get_stats():
     full = [m for m in values if m["gap_description"] is None]
     partial = [m for m in values if m["gap_description"] is not None]
     avg_conf = sum(m["confidence_score"] for m in values) / len(values)
+
+    # Category breakdown
+    categories = {}
+    for m in values:
+        cat = m.get("source_category", "Unknown")
+        categories[cat] = categories.get(cat, 0) + 1
+
+    # NIST Function breakdown
+    functions = {}
+    for m in values:
+        func = m.get("target_function", "Unknown")
+        functions[func] = functions.get(func, 0) + 1
+
     return {
         "total_controls": len(values),
         "full_coverage": len(full),
         "partial_coverage": len(partial),
         "coverage_percentage": round((len(full) / len(values)) * 100, 1),
         "average_confidence": round(avg_conf * 100, 1),
+        "categories": categories,
+        "nist_functions": functions,
+        "frameworks": {
+            "source": "ISO 27001:2022",
+            "target": "NIST CSF 2.0"
+        }
     }
 
 @router.get("/search/{control_id}")
@@ -47,8 +67,31 @@ def search_mapping(control_id: str):
     mappings = load_mappings()
     key = f"ISO_27001_{control_id}"
     if key not in mappings:
-        raise HTTPException(status_code=404, detail=f"Control {control_id} not found")
+        raise HTTPException(
+            status_code=404,
+            detail=f"Control {control_id} not found"
+        )
     return mappings[key]
+
+@router.get("/by-category/{category}")
+def get_by_category(category: str):
+    mappings = load_mappings()
+    filtered = [
+        m for m in mappings.values()
+        if m.get("source_category", "").lower() == category.lower()
+    ]
+    if not filtered:
+        raise HTTPException(status_code=404, detail=f"Category {category} not found")
+    return {"category": category, "total": len(filtered), "mappings": filtered}
+
+@router.get("/by-function/{function}")
+def get_by_function(function: str):
+    mappings = load_mappings()
+    filtered = [
+        m for m in mappings.values()
+        if m.get("target_function", "").upper() == function.upper()
+    ]
+    return {"function": function, "total": len(filtered), "mappings": filtered}
 
 @router.post("/seed-db")
 def seed_database(
@@ -76,4 +119,4 @@ def seed_database(
             db.add(record)
             count += 1
     db.commit()
-    return {"message": f"Seeded {count} mappings"}
+    return {"message": f"Seeded {count} mappings", "total": db.query(ControlMapping).count()}

@@ -588,3 +588,42 @@ Unauthorized commercial redistribution or replication without permission is proh
 ---
 
 ## ⭐ If this helped you, give it a star on GitHub!
+
+---
+
+### ✅ Phase 9 — Better NLP with TF-IDF
+**Status:** ✅ Done
+
+**What I did:**
+- Implemented TF-IDF vectorization with scikit-learn
+- Added cosine similarity scoring against NIST reference texts
+- Combined TF-IDF score with keyword boost for final confidence
+- More accurate semantic matching than simple keyword detection
+
+---
+
+### ✅ Phase 10 — PDF Report Export
+**Status:** ✅ Done
+
+**What I did:**
+- Built professional PDF report generator using ReportLab
+- Executive summary table with key metrics
+- Control category breakdown table
+- Complete mapping details table (all 26 controls)
+- Gap analysis section for partial coverage controls
+- Added "Download PDF Report" button on dashboard
+- One-click download directly from frontend
+
+**API Endpoints added:**
+| Endpoint | What it does |
+|----------|-------------|
+| GET /reports/download | Download PDF compliance report |
+| GET /reports/preview | Preview report summary |
+
+---
+
+### ⏳ Phase 11 — More Frameworks (PCI-DSS, GDPR)
+**Status:** ⏳ Pending
+
+### ⏳ Phase 12 — Final Polish + Presentation
+**Status:** ⏳ Pending

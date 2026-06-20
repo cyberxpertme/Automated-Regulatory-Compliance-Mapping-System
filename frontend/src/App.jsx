@@ -4,9 +4,9 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveCo
 
 const API = "http://localhost:8001"
 const COLORS = ["#22c55e", "#f59e0b"]
+const FN_COLORS = ["#38bdf8", "#a78bfa", "#22c55e", "#f59e0b", "#ec4899", "#06b6d4"]
 
 export default function App() {
-  const [framework, setFramework] = useState("iso27001")
   const [stats, setStats] = useState(null)
   const [mappings, setMappings] = useState([])
   const [nlpResult, setNlpResult] = useState(null)
@@ -14,16 +14,25 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [downloading, setDownloading] = useState(false)
 
-  // Upload tab states
-  const [uploadFile, setUploadFile] = useState(null)
+  // Multi-upload states
+  const [selectedFiles, setSelectedFiles] = useState([])
   const [uploadResult, setUploadResult] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState(null)
+  const [liveStats, setLiveStats] = useState(null)
+  const [downloadingUploadReport, setDownloadingUploadReport] = useState(false)
 
   useEffect(() => {
-    axios.get(`${API}/frameworks/${framework}/stats`).then(r => setStats(r.data)).catch(console.log)
-    axios.get(`${API}/frameworks/${framework}/mappings`).then(r => setMappings(r.data.mappings)).catch(console.log)
-  }, [framework])
+    axios.get(`${API}/mapping/stats`).then(r => setStats(r.data)).catch(console.log)
+    axios.get(`${API}/mapping/sample`).then(r => setMappings(r.data.mappings)).catch(console.log)
+    fetchLiveStats()
+  }, [])
+
+  const fetchLiveStats = () => {
+    axios.get(`${API}/upload/live-stats`).then(r => {
+      if (r.data.has_data) setLiveStats(r.data)
+    }).catch(console.log)
+  }
 
   const runNlpDemo = async () => {
     setLoading(true)
@@ -49,27 +58,49 @@ export default function App() {
     setDownloading(false)
   }
 
-  const handleFileChange = (e) => {
-    setUploadFile(e.target.files[0])
+  const handleFilesChange = (e) => {
+    setSelectedFiles(Array.from(e.target.files))
     setUploadResult(null)
     setUploadError(null)
   }
 
-  const handleUpload = async () => {
-    if (!uploadFile) return
+  const handleMultiUpload = async () => {
+    if (selectedFiles.length === 0) {
+      setUploadError("Please select at least one file")
+      return
+    }
     setUploading(true)
     setUploadError(null)
     const formData = new FormData()
-    formData.append("file", uploadFile)
+    selectedFiles.forEach(f => formData.append("files", f))
+
     try {
-      const res = await axios.post(`${API}/upload/analyze`, formData, {
+      const res = await axios.post(`${API}/upload/analyze-multi`, formData, {
         headers: { "Content-Type": "multipart/form-data" }
       })
       setUploadResult(res.data)
+      fetchLiveStats()
     } catch (err) {
-      setUploadError(err.response?.data?.detail || "Upload failed")
+      setUploadError(err.response?.data?.detail || "Upload failed.")
     }
     setUploading(false)
+  }
+
+  const downloadUploadReport = async () => {
+    setDownloadingUploadReport(true)
+    try {
+      const response = await axios.get(`${API}/upload/download-report`, { responseType: "blob" })
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const link = document.createElement("a")
+      link.href = url
+      link.setAttribute("download", `uploaded_analysis_${Date.now()}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+    } catch (err) {
+      alert("Download failed: " + (err.response?.data?.detail || err.message))
+    }
+    setDownloadingUploadReport(false)
   }
 
   const pieData = stats ? [
@@ -82,7 +113,9 @@ export default function App() {
     confidence: Math.round(m.confidence_score * 100),
   }))
 
-  const frameworkNames = { iso27001: "ISO 27001:2022", pci_dss: "PCI-DSS v4.0" }
+  const liveFunctionData = liveStats?.function_distribution
+    ? Object.entries(liveStats.function_distribution).map(([name, value]) => ({ name, value }))
+    : []
 
   return (
     <div style={{ fontFamily: "sans-serif", background: "#0f172a", minHeight: "100vh", color: "white" }}>
@@ -97,35 +130,29 @@ export default function App() {
         </button>
       </div>
 
-      <div style={{ display: "flex", justifyContent: "space-between", padding: "20px 40px 0", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
-        <div style={{ display: "flex", gap: "8px" }}>
-          {[
-            { id: "dashboard", label: "📊 Dashboard" },
-            { id: "mappings", label: "🗺️ Mappings" },
-            { id: "nlp", label: "🧠 NLP Engine" },
-            { id: "upload", label: "📤 Upload & Auto-Map" },
-          ].map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              style={{ padding: "8px 18px", borderRadius: "8px", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "0.85rem",
-                background: activeTab === tab.id ? "#38bdf8" : "#1e293b", color: activeTab === tab.id ? "#0f172a" : "#94a3b8" }}>
-              {tab.label}
-            </button>
-          ))}
+      {liveStats && (
+        <div style={{ background: "#0c1e3e", padding: "10px 40px", fontSize: "0.85rem", color: "#94a3b8", borderBottom: "1px solid #1e3a5f" }}>
+          🔴 Live from your uploads: <strong style={{ color: "#38bdf8" }}>{liveStats.total_files}</strong> files |
+          <strong style={{ color: "#38bdf8" }}> {liveStats.total_clauses_mapped}</strong> clauses mapped |
+          Avg Confidence: <strong style={{ color: "#22c55e" }}>{liveStats.average_confidence}%</strong> |
+          High Confidence: <strong style={{ color: "#22c55e" }}>{liveStats.high_confidence_count}</strong> |
+          Low Confidence: <strong style={{ color: "#f59e0b" }}>{liveStats.low_confidence_count}</strong>
         </div>
+      )}
 
-        {activeTab !== "upload" && (
-          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-            <span style={{ color: "#94a3b8", fontSize: "0.85rem" }}>Framework:</span>
-            {Object.keys(frameworkNames).map(fw => (
-              <button key={fw} onClick={() => setFramework(fw)}
-                style={{ padding: "6px 16px", borderRadius: "20px", border: framework === fw ? "1px solid #a78bfa" : "1px solid #334155",
-                  cursor: "pointer", fontSize: "0.8rem", fontWeight: "bold",
-                  background: framework === fw ? "#a78bfa" : "#1e293b", color: framework === fw ? "#0f172a" : "#94a3b8" }}>
-                {frameworkNames[fw]}
-              </button>
-            ))}
-          </div>
-        )}
+      <div style={{ display: "flex", gap: "8px", padding: "20px 40px 0" }}>
+        {[
+          { id: "dashboard", label: "📊 Dashboard" },
+          { id: "mappings", label: "🗺️ Mappings" },
+          { id: "nlp", label: "🧠 NLP Engine" },
+          { id: "upload", label: "📤 Upload & Auto-Map" },
+        ].map(tab => (
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+            style={{ padding: "8px 20px", borderRadius: "8px", border: "none", cursor: "pointer", fontWeight: "bold",
+              background: activeTab === tab.id ? "#38bdf8" : "#1e293b", color: activeTab === tab.id ? "#0f172a" : "#94a3b8" }}>
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       <div style={{ padding: "30px 40px" }}>
@@ -145,7 +172,8 @@ export default function App() {
                 </div>
               ))}
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "20px" }}>
               <div style={{ background: "#1e293b", borderRadius: "12px", padding: "20px" }}>
                 <h3 style={{ margin: "0 0 16px", color: "#e2e8f0" }}>Coverage Breakdown</h3>
                 <ResponsiveContainer width="100%" height={220}>
@@ -169,6 +197,20 @@ export default function App() {
                 </ResponsiveContainer>
               </div>
             </div>
+
+            {liveStats && (
+              <div style={{ background: "#1e293b", borderRadius: "12px", padding: "20px", border: "1px solid #38bdf8" }}>
+                <h3 style={{ margin: "0 0 16px", color: "#38bdf8" }}>🔴 Live: Your Uploaded Documents — NIST Function Distribution</h3>
+                <ResponsiveContainer width="100%" height={220}>
+                  <PieChart>
+                    <Pie data={liveFunctionData} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                      {liveFunctionData.map((_, i) => <Cell key={i} fill={FN_COLORS[i % FN_COLORS.length]} />)}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </div>
         )}
 
@@ -177,7 +219,7 @@ export default function App() {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "#0f172a" }}>
-                  {[frameworkNames[framework], "Title", "NIST CSF", "Confidence", "Gap"].map(h => (
+                  {["ISO 27001", "Title", "NIST CSF", "Confidence", "Gap"].map(h => (
                     <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#38bdf8", fontSize: "0.85rem" }}>{h}</th>
                   ))}
                 </tr>
@@ -232,93 +274,110 @@ export default function App() {
         {activeTab === "upload" && (
           <div>
             <div style={{ background: "#1e293b", borderRadius: "12px", padding: "24px", marginBottom: "20px" }}>
-              <h3 style={{ margin: "0 0 8px", color: "#e2e8f0" }}>📤 Upload Document for Automatic Mapping</h3>
-              <p style={{ color: "#94a3b8", marginBottom: "20px", fontSize: "0.9rem" }}>
-                Upload any compliance document (PDF). The system will extract clauses using NLP
-                and automatically map them to NIST CSF controls using TF-IDF similarity.
+              <h3 style={{ margin: "0 0 12px", color: "#e2e8f0" }}>📤 Upload Multiple Documents for Automatic Mapping</h3>
+              <p style={{ color: "#94a3b8", marginBottom: "16px" }}>
+                Select 2, 3, or more PDF/TXT compliance documents at once. The system extracts
+                clauses with NLP, maps them to NIST CSF 2.0 using TF-IDF similarity, updates the
+                live dashboard above, and lets you download a combined PDF report.
               </p>
 
-              <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: "12px", alignItems: "center", marginBottom: "12px", flexWrap: "wrap" }}>
                 <input
                   type="file"
-                  accept=".pdf"
-                  onChange={handleFileChange}
-                  style={{
-                    background: "#0f172a", color: "#e2e8f0", padding: "10px",
-                    borderRadius: "8px", border: "1px solid #334155", fontSize: "0.85rem"
-                  }}
+                  accept=".pdf,.txt"
+                  multiple
+                  onChange={handleFilesChange}
+                  style={{ color: "#e2e8f0", background: "#0f172a", border: "1px solid #334155", borderRadius: "8px", padding: "10px", fontSize: "0.85rem" }}
                 />
-                <button onClick={handleUpload} disabled={!uploadFile || uploading}
-                  style={{
-                    background: uploadFile ? "#22c55e" : "#334155", color: "#0f172a",
-                    padding: "10px 24px", borderRadius: "8px", border: "none",
-                    cursor: uploadFile ? "pointer" : "not-allowed", fontWeight: "bold"
-                  }}>
-                  {uploading ? "⏳ Processing..." : "🚀 Upload & Auto-Map"}
+                <button onClick={handleMultiUpload} disabled={uploading || selectedFiles.length === 0}
+                  style={{ background: uploading ? "#475569" : "#22c55e", color: "#0f172a", padding: "10px 24px",
+                    borderRadius: "8px", border: "none", cursor: uploading ? "not-allowed" : "pointer", fontWeight: "bold" }}>
+                  {uploading ? "⏳ Analyzing..." : `🚀 Upload & Auto-Map (${selectedFiles.length})`}
                 </button>
+
+                {uploadResult && (
+                  <button onClick={downloadUploadReport} disabled={downloadingUploadReport}
+                    style={{ background: "#a78bfa", color: "#0f172a", padding: "10px 24px",
+                      borderRadius: "8px", border: "none", cursor: "pointer", fontWeight: "bold" }}>
+                    {downloadingUploadReport ? "⏳ Generating..." : "📄 Download Combined Report"}
+                  </button>
+                )}
               </div>
 
-              {uploadFile && (
-                <p style={{ color: "#38bdf8", marginTop: "12px", fontSize: "0.85rem" }}>
-                  Selected: {uploadFile.name}
-                </p>
+              {selectedFiles.length > 0 && (
+                <div style={{ color: "#38bdf8", fontSize: "0.85rem" }}>
+                  📎 Selected ({selectedFiles.length}): {selectedFiles.map(f => f.name).join(", ")}
+                </div>
+              )}
+
+              {uploadError && (
+                <div style={{ background: "#7f1d1d", color: "#fca5a5", padding: "10px 16px", borderRadius: "8px", fontSize: "0.85rem", marginTop: "10px" }}>
+                  ⚠️ {uploadError}
+                </div>
               )}
             </div>
 
-            {uploadError && (
-              <div style={{ background: "#7f1d1d", color: "#fca5a5", padding: "16px", borderRadius: "8px", marginBottom: "20px" }}>
-                ⚠️ {uploadError}
-              </div>
-            )}
-
             {uploadResult && (
               <div>
-                <div style={{
-                  background: "#1e293b", borderRadius: "12px", padding: "20px", marginBottom: "20px",
-                  display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px"
-                }}>
-                  <div>
-                    <div style={{ fontSize: "1.8rem", fontWeight: "bold", color: "#38bdf8" }}>
-                      {uploadResult.total_clauses_extracted}
-                    </div>
-                    <div style={{ color: "#94a3b8", fontSize: "0.8rem" }}>Clauses Extracted</div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "20px" }}>
+                  <div style={{ background: "#1e293b", borderRadius: "12px", padding: "16px", borderTop: "3px solid #38bdf8" }}>
+                    <div style={{ fontSize: "1.6rem", fontWeight: "bold", color: "#38bdf8" }}>{uploadResult.combined_stats.total_files}</div>
+                    <div style={{ color: "#94a3b8", fontSize: "0.8rem" }}>Files Uploaded</div>
                   </div>
-                  <div>
-                    <div style={{ fontSize: "1.8rem", fontWeight: "bold", color: "#a78bfa" }}>
-                      {uploadResult.total_mappings_created || uploadResult.mappings?.length || 0}
-                    </div>
-                    <div style={{ color: "#94a3b8", fontSize: "0.8rem" }}>Auto-Mappings Created</div>
+                  <div style={{ background: "#1e293b", borderRadius: "12px", padding: "16px", borderTop: "3px solid #22c55e" }}>
+                    <div style={{ fontSize: "1.6rem", fontWeight: "bold", color: "#22c55e" }}>{uploadResult.combined_stats.total_clauses_mapped}</div>
+                    <div style={{ color: "#94a3b8", fontSize: "0.8rem" }}>Clauses Mapped</div>
                   </div>
-                  <div>
-                    <div style={{ fontSize: "1.8rem", fontWeight: "bold", color: "#22c55e" }}>
-                      {uploadResult.average_mapping_confidence}%
-                    </div>
+                  <div style={{ background: "#1e293b", borderRadius: "12px", padding: "16px", borderTop: "3px solid #a78bfa" }}>
+                    <div style={{ fontSize: "1.6rem", fontWeight: "bold", color: "#a78bfa" }}>{uploadResult.combined_stats.average_confidence}%</div>
                     <div style={{ color: "#94a3b8", fontSize: "0.8rem" }}>Avg Confidence</div>
+                  </div>
+                  <div style={{ background: "#1e293b", borderRadius: "12px", padding: "16px", borderTop: "3px solid #f59e0b" }}>
+                    <div style={{ fontSize: "1.6rem", fontWeight: "bold", color: "#f59e0b" }}>{uploadResult.combined_stats.high_confidence_count}</div>
+                    <div style={{ color: "#94a3b8", fontSize: "0.8rem" }}>High Confidence</div>
                   </div>
                 </div>
 
-                <h4 style={{ color: "#e2e8f0", marginBottom: "12px" }}>Auto-Generated Mappings:</h4>
-                {uploadResult.mappings?.map((m, i) => (
-                  <div key={i} style={{
-                    background: "#1e293b", borderRadius: "8px", padding: "16px",
-                    marginBottom: "10px", borderLeft: "3px solid #22c55e"
-                  }}>
-                    <div style={{ color: "#94a3b8", fontSize: "0.85rem", marginBottom: "8px" }}>
-                      <strong style={{ color: "#e2e8f0" }}>Extracted Text:</strong> {m.source_text}
+                <div style={{ background: "#1e293b", borderRadius: "12px", padding: "16px", marginBottom: "20px" }}>
+                  <h4 style={{ color: "#e2e8f0", margin: "0 0 10px" }}>Per-File Breakdown</h4>
+                  {uploadResult.combined_stats.file_breakdown.map((f, i) => (
+                    <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #334155", fontSize: "0.85rem" }}>
+                      <span style={{ color: "#38bdf8" }}>{f.filename}</span>
+                      <span style={{ color: "#94a3b8" }}>{f.clauses_found} clauses | {f.average_confidence}% confidence</span>
                     </div>
-                    <div style={{ display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap" }}>
-                      <span style={{ color: "#38bdf8" }}>→ Mapped to: <strong>{m.matched_nist_control}</strong></span>
-                      <span style={{ color: "#a78bfa" }}>{m.matched_nist_title}</span>
-                      <span style={{
-                        background: m.mapping_confidence > 0.7 ? "#14532d" : "#713f12",
-                        color: m.mapping_confidence > 0.7 ? "#22c55e" : "#f59e0b",
-                        padding: "2px 10px", borderRadius: "20px", fontSize: "0.8rem"
-                      }}>
-                        {Math.round(m.mapping_confidence * 100)}%
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+
+                <div style={{ background: "#1e293b", borderRadius: "12px", overflow: "hidden", overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                    <thead>
+                      <tr style={{ background: "#0f172a" }}>
+                        {["File", "Extracted Clause", "Mapped NIST Control", "Function", "Confidence"].map(h => (
+                          <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "#38bdf8", fontSize: "0.8rem" }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {uploadResult.mappings.slice(0, 50).map((m, i) => (
+                        <tr key={i} style={{ borderTop: "1px solid #334155" }}>
+                          <td style={{ padding: "10px 14px", color: "#64748b", fontSize: "0.75rem" }}>{m.source_file}</td>
+                          <td style={{ padding: "10px 14px", color: "#e2e8f0", fontSize: "0.8rem", maxWidth: "300px" }}>{m.source_text}</td>
+                          <td style={{ padding: "10px 14px", color: "#a78bfa", fontSize: "0.8rem", fontWeight: "bold" }}>{m.matched_nist_control}</td>
+                          <td style={{ padding: "10px 14px", color: "#94a3b8", fontSize: "0.75rem" }}>{m.nist_function}</td>
+                          <td style={{ padding: "10px 14px" }}>
+                            <span style={{
+                              background: m.confidence_score > 0.85 ? "#14532d" : "#713f12",
+                              color: m.confidence_score > 0.85 ? "#22c55e" : "#f59e0b",
+                              padding: "2px 10px", borderRadius: "20px", fontSize: "0.75rem"
+                            }}>
+                              {Math.round(m.confidence_score * 100)}%
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>

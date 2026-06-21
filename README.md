@@ -627,3 +627,36 @@ Unauthorized commercial redistribution or replication without permission is proh
 
 ### ⏳ Phase 12 — Final Polish + Presentation
 **Status:** ⏳ Pending
+
+---
+
+### ✅ Phase 14 — Authentication UI + Database Persistence
+**Status:** ✅ Done
+
+**What I did:**
+- Built Login/Register UI connected to existing JWT backend
+- Added "Continue as Guest" option for quick demo access
+- Created UploadHistory and UploadClause database tables
+- Uploaded document analysis now persists in PostgreSQL (survives server restart)
+- Added /upload/history endpoint to view all past upload batches
+- live-stats and download-report now read from database, not memory
+
+**Database Tables added:**
+| Table | Purpose |
+|-------|---------|
+| upload_history | Stores each upload batch summary (files, confidence, stats) |
+| upload_clauses | Stores every individual extracted clause + its NIST mapping |
+
+**API Endpoints added/updated:**
+| Endpoint | What it does |
+|----------|-------------|
+| POST /auth/register | Create account (used by frontend Login UI) |
+| POST /auth/login | Login, get JWT (used by frontend Login UI) |
+| GET /upload/history | List all past upload batches |
+| GET /upload/live-stats | Now reads latest batch from DB |
+| GET /upload/download-report | Now generates PDF from DB record |
+
+**What I learned:**
+- How to persist analysis results instead of keeping them in memory
+- How JWT tokens integrate with a React frontend (localStorage)
+- Why production systems need database-backed history, not just live state

@@ -1,8 +1,9 @@
 # upload.py
-# Phase 13: Multi-file upload, combined NLP mapping, live stats, PDF export
+# Phase 13+14: Multi-file upload, NLP+TF-IDF mapping, DB persistence, PDF export
 
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from fastapi.responses import StreamingResponse
+from sqlalchemy.orm import Session
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from reportlab.lib.pagesizes import A4
@@ -13,6 +14,8 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.enums import TA_CENTER
 from io import BytesIO
 from datetime import datetime
+from models.database import get_db
+from models.upload_history import UploadHistory, UploadClause
 import pdfplumber
 import spacy
 import json
@@ -25,14 +28,6 @@ nlp = spacy.load("en_core_web_sm")
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NIST_FILE = os.path.join(BASE_DIR, "mappings", "nist_csf_controls.json")
-
-# In-memory store of the latest uploaded-document analysis
-# (resets when server restarts — fine for a thesis demo)
-LATEST_UPLOAD_RESULTS = {
-    "files": [],
-    "all_mappings": [],
-    "combined_stats": None
-}
 
 CONTROL_KEYWORDS = [
     "shall", "must", "should", "required", "mandatory",
@@ -109,10 +104,7 @@ def process_single_file(filename: str, file_bytes: bytes):
             raise HTTPException(status_code=400, detail=f"{filename}: could not decode as UTF-8 text")
 
     if not text.strip():
-        raise HTTPException(
-            status_code=400,
-            detail=f"{filename}: no readable text found (possibly a scanned/image PDF)"
-        )
+        raise HTTPException(status_code=400, detail=f"{filename}: no readable text found")
 
     clauses = extract_clauses(text, filename)
     nist_controls = load_nist_controls()
@@ -131,33 +123,14 @@ def process_single_file(filename: str, file_bytes: bytes):
         })
     return results
 
-@router.post("/analyze")
-async def analyze_uploaded_file(file: UploadFile = File(...)):
-    """Single file upload (kept for backward compatibility)"""
-    file_bytes = await file.read()
-    results = process_single_file(file.filename, file_bytes)
-    if not results:
-        return {
-            "filename": file.filename,
-            "total_clauses_found": 0,
-            "message": "No compliance clauses detected.",
-            "mappings": []
-        }
-    avg_confidence = round(sum(r["confidence_score"] for r in results) / len(results) * 100, 1)
-    return {
-        "filename": file.filename,
-        "total_clauses_found": len(results),
-        "total_mapped": len(results),
-        "average_confidence": avg_confidence,
-        "mappings": results
-    }
-
 @router.post("/analyze-multi")
-async def analyze_multiple_files(files: list[UploadFile] = File(...)):
+async def analyze_multiple_files(
+    files: list[UploadFile] = File(...),
+    db: Session = Depends(get_db)
+):
     """
-    Upload 2-4+ files at once. Combines all extracted clauses and
-    mappings into one dataset, stores it for the live dashboard,
-    and returns combined stats + per-file breakdown.
+    Upload 2+ files. Extract+map clauses with NLP+TF-IDF,
+    SAVE the result permanently to PostgreSQL, return combined stats.
     """
     if len(files) == 0:
         raise HTTPException(status_code=400, detail="No files uploaded")
@@ -182,25 +155,45 @@ async def analyze_multiple_files(files: list[UploadFile] = File(...)):
             errors.append({"filename": f.filename, "error": e.detail})
 
     if not all_mappings:
-        raise HTTPException(
-            status_code=400,
-            detail=f"No clauses could be extracted from any file. Errors: {errors}"
-        )
+        raise HTTPException(status_code=400, detail=f"No clauses extracted. Errors: {errors}")
 
-    avg_confidence = round(
-        sum(m["confidence_score"] for m in all_mappings) / len(all_mappings) * 100, 1
-    )
-
-    # Function distribution (GOVERN/IDENTIFY/PROTECT/DETECT/RESPOND/RECOVER)
+    avg_confidence = round(sum(m["confidence_score"] for m in all_mappings) / len(all_mappings) * 100, 1)
     function_counts = {}
     for m in all_mappings:
         fn = m["nist_function"]
         function_counts[fn] = function_counts.get(fn, 0) + 1
-
     high_conf = len([m for m in all_mappings if m["confidence_score"] >= 0.85])
     low_conf = len(all_mappings) - high_conf
 
+    # --- SAVE TO DATABASE (Phase 14) ---
+    history_record = UploadHistory(
+        uploaded_by="anonymous",  # could be replaced with current_user.email if auth required
+        total_files=len(files),
+        total_clauses_mapped=len(all_mappings),
+        average_confidence=avg_confidence,
+        high_confidence_count=high_conf,
+        low_confidence_count=low_conf,
+        file_breakdown=json.dumps(file_summaries),
+        function_distribution=json.dumps(function_counts)
+    )
+    db.add(history_record)
+    db.commit()
+    db.refresh(history_record)
+
+    for m in all_mappings:
+        db.add(UploadClause(
+            upload_id=history_record.id,
+            source_file=m["source_file"],
+            source_text=m["source_text"],
+            matched_nist_control=m["matched_nist_control"],
+            matched_nist_title=m["matched_nist_title"],
+            nist_function=m["nist_function"],
+            confidence_score=m["confidence_score"]
+        ))
+    db.commit()
+
     combined_stats = {
+        "upload_id": history_record.id,
         "total_files": len(files),
         "successful_files": len(file_summaries),
         "failed_files": len(errors),
@@ -214,32 +207,59 @@ async def analyze_multiple_files(files: list[UploadFile] = File(...)):
         "generated_at": datetime.now().isoformat()
     }
 
-    # Save in memory so dashboard /upload/live-stats can read it
-    LATEST_UPLOAD_RESULTS["files"] = file_summaries
-    LATEST_UPLOAD_RESULTS["all_mappings"] = all_mappings
-    LATEST_UPLOAD_RESULTS["combined_stats"] = combined_stats
-
     return {
-        "message": f"Processed {len(file_summaries)} of {len(files)} files successfully",
+        "message": f"Processed {len(file_summaries)} of {len(files)} files and saved to database",
         "combined_stats": combined_stats,
         "mappings": all_mappings
     }
 
 @router.get("/live-stats")
-def get_live_upload_stats():
-    """Dashboard polls this to show live % from the most recent upload batch"""
-    if not LATEST_UPLOAD_RESULTS["combined_stats"]:
+def get_live_upload_stats(db: Session = Depends(get_db)):
+    """Get the MOST RECENT upload batch from the database (persists across restarts)"""
+    latest = db.query(UploadHistory).order_by(UploadHistory.id.desc()).first()
+    if not latest:
         return {"has_data": False, "message": "No documents uploaded yet"}
-    return {"has_data": True, **LATEST_UPLOAD_RESULTS["combined_stats"]}
+
+    return {
+        "has_data": True,
+        "upload_id": latest.id,
+        "total_files": latest.total_files,
+        "total_clauses_mapped": latest.total_clauses_mapped,
+        "average_confidence": latest.average_confidence,
+        "high_confidence_count": latest.high_confidence_count,
+        "low_confidence_count": latest.low_confidence_count,
+        "function_distribution": json.loads(latest.function_distribution or "{}"),
+        "file_breakdown": json.loads(latest.file_breakdown or "[]"),
+        "created_at": latest.created_at.isoformat() if latest.created_at else None
+    }
+
+@router.get("/history")
+def get_upload_history(db: Session = Depends(get_db)):
+    """List all past upload batches — shows project growth over time"""
+    records = db.query(UploadHistory).order_by(UploadHistory.id.desc()).all()
+    return {
+        "total_batches": len(records),
+        "history": [
+            {
+                "upload_id": r.id,
+                "total_files": r.total_files,
+                "total_clauses_mapped": r.total_clauses_mapped,
+                "average_confidence": r.average_confidence,
+                "created_at": r.created_at.isoformat() if r.created_at else None
+            }
+            for r in records
+        ]
+    }
 
 @router.get("/download-report")
-def download_upload_report():
-    """Generate a PDF report from the latest multi-file upload analysis"""
-    if not LATEST_UPLOAD_RESULTS["all_mappings"]:
+def download_upload_report(db: Session = Depends(get_db)):
+    """Generate PDF report from the MOST RECENT upload batch in the database"""
+    latest = db.query(UploadHistory).order_by(UploadHistory.id.desc()).first()
+    if not latest:
         raise HTTPException(status_code=404, detail="No uploaded document analysis available yet")
 
-    mappings = LATEST_UPLOAD_RESULTS["all_mappings"]
-    stats = LATEST_UPLOAD_RESULTS["combined_stats"]
+    clauses = db.query(UploadClause).filter(UploadClause.upload_id == latest.id).all()
+    file_breakdown = json.loads(latest.file_breakdown or "[]")
 
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4,
@@ -261,7 +281,7 @@ def download_upload_report():
 
     story = []
     story.append(Paragraph("🛡️ Uploaded Document Compliance Analysis Report", title_style))
-    story.append(Paragraph("Automatic NLP + TF-IDF Mapping to NIST CSF 2.0", subtitle_style))
+    story.append(Paragraph("Automatic NLP + TF-IDF Mapping to NIST CSF 2.0 (Saved in Database)", subtitle_style))
     story.append(Paragraph("University of Dhaka | PMICS Batch 4 | H-411 & H-392", subtitle_style))
     story.append(Paragraph(f"Generated: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}", subtitle_style))
     story.append(HRFlowable(width="100%", thickness=2, color=CYAN, spaceAfter=14))
@@ -269,12 +289,12 @@ def download_upload_report():
     story.append(Paragraph("Executive Summary", heading_style))
     summary_data = [
         ["Metric", "Value"],
-        ["Files Uploaded", str(stats["total_files"])],
-        ["Successfully Processed", str(stats["successful_files"])],
-        ["Total Clauses Mapped", str(stats["total_clauses_mapped"])],
-        ["Average Confidence", f"{stats['average_confidence']}%"],
-        ["High Confidence (>=85%)", str(stats["high_confidence_count"])],
-        ["Low Confidence (<85%)", str(stats["low_confidence_count"])],
+        ["Files Uploaded", str(latest.total_files)],
+        ["Total Clauses Mapped", str(latest.total_clauses_mapped)],
+        ["Average Confidence", f"{latest.average_confidence}%"],
+        ["High Confidence (>=85%)", str(latest.high_confidence_count)],
+        ["Low Confidence (<85%)", str(latest.low_confidence_count)],
+        ["Upload Date", latest.created_at.strftime("%Y-%m-%d %H:%M") if latest.created_at else "N/A"],
     ]
     t = Table(summary_data, colWidths=[3*inch, 3*inch])
     t.setStyle(TableStyle([
@@ -289,7 +309,7 @@ def download_upload_report():
 
     story.append(Paragraph("Files Processed", heading_style))
     file_data = [["Filename", "Clauses Found", "Avg Confidence"]]
-    for f in stats["file_breakdown"]:
+    for f in file_breakdown:
         file_data.append([f["filename"], str(f["clauses_found"]), f"{f['average_confidence']}%"])
     ft = Table(file_data, colWidths=[3.5*inch, 1.5*inch, 1.5*inch])
     ft.setStyle(TableStyle([
@@ -304,12 +324,12 @@ def download_upload_report():
 
     story.append(Paragraph("Extracted Clause to NIST CSF Mapping", heading_style))
     map_data = [["File", "Extracted Clause", "NIST Control", "Confidence"]]
-    for m in mappings[:60]:
+    for c in clauses[:60]:
         map_data.append([
-            m["source_file"],
-            Paragraph(m["source_text"][:90], normal_style),
-            m["matched_nist_control"],
-            f"{round(m['confidence_score']*100)}%"
+            c.source_file,
+            Paragraph(c.source_text[:90], normal_style),
+            c.matched_nist_control,
+            f"{round(c.confidence_score*100)}%"
         ])
     mt = Table(map_data, colWidths=[1.2*inch, 3.3*inch, 1*inch, 1*inch])
     mt.setStyle(TableStyle([

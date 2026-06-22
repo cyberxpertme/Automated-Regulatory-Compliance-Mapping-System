@@ -124,16 +124,21 @@ export default function App({ user, token, onLogout }) {
           <h1 style={{ margin: 0, color: "#38bdf8", fontSize: "1.3rem" }}>🛡️ Automated Regulatory Compliance Mapping System</h1>
           <p style={{ margin: "4px 0 0", color: "#94a3b8", fontSize: "0.85rem" }}>University of Dhaka — PMICS Batch 4 | H-411 & H-392</p>
         </div>
+
         <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
           <div style={{ textAlign: "right" }}>
             <div style={{ color: "#e2e8f0", fontSize: "0.85rem", fontWeight: "bold" }}>{user?.full_name}</div>
             <div style={{ color: "#94a3b8", fontSize: "0.75rem" }}>{user?.role}</div>
           </div>
-          <button onClick={onLogout} style={{ background: "#7f1d1d", color: "#fca5a5", padding: "8px 14px", borderRadius: "8px", border: "none", cursor: "pointer", fontSize: "0.8rem" }}>Logout</button>
-        <button onClick={downloadReport} disabled={downloading}
-          style={{ background: "#22c55e", color: "#0f172a", padding: "10px 20px", borderRadius: "8px", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "0.9rem" }}>
-          {downloading ? "⏳ Generating..." : "📄 Download PDF Report"}
-        </button>
+          <button onClick={onLogout}
+            style={{ background: "#7f1d1d", color: "#fca5a5", padding: "8px 14px", borderRadius: "8px", border: "none", cursor: "pointer", fontSize: "0.8rem" }}>
+            Logout
+          </button>
+          <button onClick={downloadReport} disabled={downloading}
+            style={{ background: "#22c55e", color: "#0f172a", padding: "10px 20px", borderRadius: "8px", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "0.9rem" }}>
+            {downloading ? "⏳ Generating..." : "📄 Download PDF Report"}
+          </button>
+        </div>
       </div>
 
       {liveStats && (
@@ -283,8 +288,8 @@ export default function App({ user, token, onLogout }) {
               <h3 style={{ margin: "0 0 12px", color: "#e2e8f0" }}>📤 Upload Multiple Documents for Automatic Mapping</h3>
               <p style={{ color: "#94a3b8", marginBottom: "16px" }}>
                 Select 2, 3, or more PDF/TXT compliance documents at once. The system extracts
-                clauses with NLP, maps them to NIST CSF 2.0 using TF-IDF similarity, updates the
-                live dashboard above, and lets you download a combined PDF report.
+                clauses with NLP, maps them to NIST CSF 2.0 using TF-IDF similarity, saves results
+                permanently to the database, and lets you download a combined PDF report.
               </p>
 
               <div style={{ display: "flex", gap: "12px", alignItems: "center", marginBottom: "12px", flexWrap: "wrap" }}>

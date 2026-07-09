@@ -157,6 +157,7 @@ export default function App({ user, token, onLogout }) {
           { id: "mappings", label: "🗺️ Mappings" },
           { id: "nlp", label: "🧠 NLP Engine" },
           { id: "upload", label: "📤 Upload & Auto-Map" },
+          { id: "history", label: "📋 History" },
         ].map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
             style={{ padding: "8px 20px", borderRadius: "8px", border: "none", cursor: "pointer", fontWeight: "bold",

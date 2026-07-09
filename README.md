@@ -1,6 +1,6 @@
 # 🛡️ Automated Regulatory Compliance Mapping System
 
-[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.13-blue.svg)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110-009688.svg)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-18-61DAFB.svg)](https://react.dev)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg)](https://docker.com)
@@ -12,144 +12,79 @@
 |---|---|
 | 👤 Student 1 | Md Shible Sadiqe — H-411 |
 | 👤 Student 2 | Md Nahid Chowdhury — H-392 |
-| 🎓 Supervisor | Prof. Abu Ahmed Ferdous |
-| 🏫 University | University of Dhaka — Dept. of CSE |
+| 🎓 Supervisor | Prof. Abu Ahmed Ferdaus, Associate Professor, Dept. of CSE, University of Dhaka |
 | 📅 Started | May 2025 |
-| 🔗 Repo | https://github.com/cyberxpertme/Automated-Regulatory-Compliance-Mapping-System |
+| 🔗 GitHub | https://github.com/cyberxpertme/Automated-Regulatory-Compliance-Mapping-System |
 
 ---
 
 ## 🧠 What This Project Does
 
-Organizations struggle to **manually map** cybersecurity regulations across multiple frameworks. This is time-consuming, error-prone, and expensive.
+Organizations operating in regulated sectors must comply with multiple cybersecurity frameworks simultaneously — ISO 27001, NIST CSF, and PCI-DSS. Manually cross-mapping controls across these frameworks is time-consuming, error-prone, and must be repeated every time a framework is updated.
 
-This system **automates** that process using NLP + rule-based engine.
+This system **automates** that process using NLP (Natural Language Processing) and TF-IDF based semantic similarity.
 
-## Why This Project?
-
-Organizations often struggle to manually map compliance controls across multiple cybersecurity frameworks such as ISO 27001 and NIST CSF. This platform automates regulatory mapping and compliance analytics using NLP and rule-based intelligence.
-
-
-**Real Example:**
-ISO 27001 Control A.5.1
-"A set of policies for information security shall be defined..."
-↓ NLP extracts clause
-↓ Mapping engine matches
-NIST CSF Control GV.PO-01
-"Organizational cybersecurity policy is established"
-Confidence Score: 95%
-
+**Example:**
 ---
 
-## ✨ Features
+## ✨ Key Features
 
 | Feature | Description |
 |---------|-------------|
-| 🧠 NLP Engine | spaCy extracts compliance clauses from regulatory text |
-| 🗺️ Mapping Engine | Auto-maps ISO 27001 controls to NIST CSF with confidence score |
-| 📊 Dashboard | React dashboard with charts and mapping table |
-| 🔐 Authentication | JWT login with 3 roles: Admin, Auditor, Viewer |
-| 🏢 Multi-tenancy | Organization-level data isolation |
-| 🐳 Docker Ready | One command runs everything |
+| 🧠 NLP Clause Extraction | spaCy sentence segmentation + keyword detection extracts compliance clauses |
+| 🗺️ TF-IDF Mapping Engine | Cosine similarity maps each clause to nearest NIST CSF 2.0 control |
+| 📊 Live Dashboard | React dashboard with real-time charts, coverage stats, confidence scores |
+| 📤 Multi-File Upload | Upload 2+ PDF/TXT documents, get combined auto-mapped compliance analysis |
+| 📄 PDF Report Export | Professional compliance report generated on demand via ReportLab |
+| 🔐 JWT Authentication | Login/Register with bcrypt password hashing |
+| 👥 RBAC | 3 roles: Admin, Auditor, Viewer |
+| 🏢 Multi-Framework | ISO 27001:2022 + PCI-DSS v4.0 → NIST CSF 2.0 |
+| 🗄️ DB Persistence | All upload history saved permanently in PostgreSQL |
+| 🐳 Docker Ready | One-command deployment via Docker Compose |
 
 ---
-## 🏗️ System Architecture
-```text
-Frontend (React)
-        ↓
-FastAPI Backend
-        ↓
-Authentication (JWT + RBAC)
-        ↓
-NLP Engine
-        ↓
-Mapping Engine
-        ↓
-PostgreSQL Database
-        ↓
-Analytics Dashboard
-```
----
 
-## 🚀 Key Innovations
-
-1. AI-assisted compliance mapping
-2. NLP-based regulatory clause extraction
-3. Multi-framework governance analytics
-4. Role-Based Access Control (RBAC)
-5. Dockerized deployment architecture
-6. Compliance confidence scoring engine
-
----
 ## 🏗️ Tech Stack
 
-| Layer | Technology | Why |
-|-------|-----------|-----|
-| Backend | FastAPI (Python 3.12) | Fast, auto-generates API docs |
-| Database | PostgreSQL 15 | Reliable relational database |
-| Cache | Redis 7 | Fast session caching |
-| NLP | spaCy (en_core_web_sm) | Industrial NLP library |
-| Frontend | React 18 + Vite | Fast, modern UI |
-| Charts | Recharts | React chart library |
-| Auth | JWT + bcrypt | Secure token authentication |
-| Deploy | Docker + Docker Compose | Consistent deployment |
+| Layer | Technology |
+|-------|-----------|
+| Backend | FastAPI (Python 3.13) |
+| NLP | spaCy (en_core_web_sm) |
+| Mapping | scikit-learn (TF-IDF + cosine similarity) |
+| Database | PostgreSQL 15 |
+| Cache | Redis 7 |
+| ORM | SQLAlchemy 2.x |
+| Auth | JWT (python-jose) + bcrypt (passlib) |
+| Frontend | React 18 + Vite |
+| Charts | Recharts |
+| PDF | ReportLab + pdfplumber |
+| DevOps | Docker + Docker Compose |
 
 ---
+
 ## 📂 Project Structure
-
-```text
-compliance-mapper/
-├── backend/
-│   ├── main.py
-│   ├── requirements.txt
-│   ├── models/
-│   │   ├── database.py
-│   │   ├── user.py
-│   │   └── compliance.py
-│   ├── routes/
-│   │   ├── auth.py
-│   │   ├── mapping.py
-│   │   └── nlp_routes.py
-│   ├── mappings/
-│   │   └── iso_nist_sample.json
-│   └── nlp/
-│       └── extractor.py
-│
-├── frontend/
-│   ├── src/
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   ├── pages/
-│   │   └── components/
-│   └── package.json
-│
-├── docker-compose.yml
-├── README.md
-└── LICENSE
-```
 ---
 
-## 🚀 Quick Start (5 minutes)
+## 🚀 Quick Start
 
 ### Prerequisites
-Make sure you have these installed:
-- Python 3.10+ → `python3 --version`
-- Node.js 18+ → `node --version`
-- Docker Desktop → `docker --version`
+- Python 3.10+
+- Node.js 18+
+- Docker Desktop
 
-### Clone the project
+### 1. Clone
 ```bash
 git clone https://github.com/cyberxpertme/Automated-Regulatory-Compliance-Mapping-System.git
 cd Automated-Regulatory-Compliance-Mapping-System
 ```
 
-### Start Database (Docker)
+### 2. Start Database
 ```bash
 docker-compose up -d
+docker ps
 ```
-Wait 10 seconds for PostgreSQL to start.
 
-### Start Backend
+### 3. Start Backend
 ```bash
 python3 -m venv venv
 source venv/bin/activate
@@ -159,445 +94,212 @@ cd backend
 uvicorn main:app --reload --port 8001
 ```
 
-### Start Frontend (new terminal)
+### 4. Start Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-### Open in Browser
+### 5. Open in Browser
 | Service | URL |
 |---------|-----|
-| 🎨 Dashboard | http://localhost:5174 |
+| 🎨 Dashboard | http://localhost:5173 |
 | 📖 API Docs | http://localhost:8001/docs |
 | ❤️ Health | http://localhost:8001/health |
+
+### 6. Create Admin Account
+```bash
+curl -X POST http://localhost:8001/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@du.ac.bd","full_name":"Admin","password":"test1234","role":"admin","organization":"University of Dhaka"}'
+```
 
 ---
 
 ## 🔌 API Reference
 
 ### Authentication
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | /auth/register | Create new user | No |
-| POST | /auth/login | Login, get JWT token | No |
-| GET | /auth/me | Get current user info | Yes |
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | /auth/register | No | Create new user |
+| POST | /auth/login | No | Login, get JWT token |
+| GET | /auth/me | Yes | Get current user |
 
 ### Compliance Mapping
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | /mapping/sample | Get all ISO→NIST mappings | No |
-| GET | /mapping/stats | Compliance statistics | No |
-| GET | /mapping/search/{id} | Search specific control | No |
-| POST | /mapping/seed-db | Seed database | Yes |
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | /mapping/sample | No | All ISO 27001 mappings |
+| GET | /mapping/stats | No | Coverage + confidence stats |
+| GET | /mapping/search/{id} | No | Search specific control |
+
+### Multi-Framework
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | /frameworks/list | No | List supported frameworks |
+| GET | /frameworks/{id}/mappings | No | Mappings for framework |
+| GET | /frameworks/{id}/stats | No | Stats for framework |
+| GET | /frameworks/combined/stats | No | Combined stats all frameworks |
 
 ### NLP Engine
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | /nlp/extract | Extract clauses from text | No |
-| GET | /nlp/demo | Demo on ISO 27001 sample | No |
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | /nlp/extract | No | Extract clauses from text |
+| GET | /nlp/demo | No | Demo on ISO 27001 sample |
 
-### Test the API
-1. Go to http://localhost:8001/docs
-2. Click any endpoint → "Try it out" → "Execute"
-3. For protected routes: first login → copy token → click "Authorize"
+### Upload & Auto-Map
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | /upload/analyze-multi | No | Upload 2+ files, auto-map |
+| GET | /upload/live-stats | No | Latest upload batch stats |
+| GET | /upload/history | No | All past upload batches |
+| GET | /upload/download-report | No | PDF report from last upload |
 
-###API Example
-{
-  "source_control": "A.5.15",
-  "target_control": "PR.AC",
-  "confidence": 0.94
-}
+### Reports
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | /reports/download | No | Full framework PDF report |
+| GET | /reports/preview | No | Report summary |
 
 ---
 
-## 🔐 User Roles (RBAC)
+## 📊 Current System Statistics
 
-| Role | Can Do |
-|------|--------|
-| admin | Everything — manage users, seed DB, view all |
-| auditor | View mappings, run NLP, generate reports |
-| viewer | View dashboard and mappings only |
+| Metric | Value |
+|--------|-------|
+| ISO 27001:2022 Controls | 26 |
+| PCI-DSS v4.0 Controls | 21 |
+| Total Controls Mapped | 47 |
+| Target Framework Controls | 106 (NIST CSF 2.0) |
+| ISO 27001 Avg Confidence | 92.3% |
+| PCI-DSS Avg Confidence | 93.1% |
+| Full Coverage | 91.5% |
 
-### Create test users
-```bash
-# Register an admin
-curl -X POST http://localhost:8001/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@du.ac.bd","full_name":"Admin User","password":"test1234","role":"admin","organization":"University of Dhaka"}'
+---
 
-# Login
-curl -X POST http://localhost:8001/auth/login \
-  -d "username=admin@du.ac.bd&password=test1234"
-```
+## 👥 User Roles (RBAC)
+
+| Role | Permissions |
+|------|-------------|
+| Admin | Full access — manage users, seed DB, all operations |
+| Auditor | Upload documents, run NLP, generate reports |
+| Viewer | Read-only — view dashboard and mappings |
 
 ---
 
 ## 🔧 Troubleshooting
 
-### Docker permission denied
-```bash
-sudo usermod -aG docker $USER
-newgrp docker
-```
-
-### Port already in use
-```bash
-fuser -k 8001/tcp
-fuser -k 5174/tcp
-```
-
-### spaCy model not found
-```bash
-python -m spacy download en_core_web_sm
-```
-
-### Database connection refused
-```bash
-# Make sure Docker is running
-docker-compose up -d
-docker ps
-```
-
-### venv not activated
-```bash
-source venv/bin/activate
-# You should see (venv) in terminal
-```
+| Problem | Fix |
+|---------|-----|
+| `No module named 'fastapi'` | `source venv/bin/activate` |
+| `Address already in use` | `fuser -k 8001/tcp` |
+| `Connection refused (5432)` | `docker-compose up -d` |
+| `bcrypt error` | `pip install "bcrypt==4.0.1"` |
+| Scanned PDF not working | Use text-based PDF or .txt file |
 
 ---
 
-## 📖 Project Diary
+## 📖 Project Development Diary
 
 > This section documents how this project was built step by step.
-> Anyone can follow this to build the same project from scratch.
 
 ---
 
 ### ✅ Phase 0 — Git + GitHub Setup
 **Status:** ✅ Done
 
-**What we did:**
-- Created project folder structure
-- Initialized Git repository
+- Created project folder and Git repository
 - Connected to GitHub as open source project
 - Created README as living project diary
-- Added .gitignore to protect secrets
-- Added MIT LICENSE
-
-**Commands:**
-```bash
-mkdir compliance-mapper && cd compliance-mapper
-git init
-git remote add origin https://github.com/cyberxpertme/Automated-Regulatory-Compliance-Mapping-System.git
-git add . && git commit -m "phase-0: project initialized"
-git push -u origin main
-```
-
-**What we learned:**
-- How to initialize a Git repository
-- How to connect local repo to GitHub
-- Why .gitignore is important (never push .env or venv)
+- Added .gitignore and MIT LICENSE
 
 ---
 
 ### ✅ Phase 1 — Backend Foundation
 **Status:** ✅ Done
-<img width="1756" height="992" alt="BackEnd" src="https://github.com/user-attachments/assets/96b100ea-05a1-491d-af28-dbd7fe8376dc" />
 
-
-**What we did:**
-- Created backend folder structure
-- Setup Python virtual environment (isolated dependencies)
+- Setup Python virtual environment
 - Installed FastAPI and uvicorn
-- Created first 2 API endpoints: / and /health
-- Verified with Swagger UI at localhost:8001/docs
-
-**Commands:**
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install fastapi uvicorn[standard] python-dotenv
-cd backend
-uvicorn main:app --reload --port 8001
-```
-
-**Endpoints created:**
-- GET / → Project info
-- GET /health → Health check
-
-**What we learned:**
-- How FastAPI works
-- What Swagger UI is (auto-generated API documentation)
-- How virtual environments keep dependencies isolated
+- Created root and health endpoints
+- Verified with Swagger UI at /docs
 
 ---
 
 ### ✅ Phase 2 — Database + Models
 **Status:** ✅ Done
 
-**What we did:**
 - Setup Docker with PostgreSQL 15 and Redis 7
 - Created SQLAlchemy database connection
-- Built User model with 3 RBAC roles
+- Built User model with RBAC roles (Admin/Auditor/Viewer)
 - Built ControlMapping model for ISO→NIST mappings
-- Tables auto-create when server starts
-
-**Commands:**
-```bash
-docker-compose up -d
-pip install sqlalchemy psycopg2-binary alembic
-```
-
-**Models created:**
-- User (id, email, full_name, hashed_password, role, organization)
-- ControlMapping (source_control, target_control, confidence_score, gap_description)
-
-**What we learned:**
-- How SQLAlchemy ORM maps Python classes to database tables
-- What Docker Compose does (runs multiple services together)
-- What RBAC (Role Based Access Control) means
+- Tables auto-create on server startup
 
 ---
 
 ### ✅ Phase 3 — Authentication (JWT + RBAC)
 **Status:** ✅ Done
 
-**What we did:**
 - Implemented JWT token authentication
 - Built /auth/register, /auth/login, /auth/me endpoints
-- Passwords hashed with bcrypt (never stored in plain text)
-- Protected routes require valid JWT token
-- Tested with Swagger UI
-
-**Commands:**
-```bash
-pip install passlib[bcrypt] python-jose[cryptography] python-multipart
-```
-
-**How JWT works:**
-User logs in with email+password
-↓
-Server verifies password (bcrypt)
-↓
-Server creates JWT token (signed with SECRET_KEY)
-↓
-User sends token in every request header
-↓
-Server verifies token on protected routes
-
-**What we learned:**
-- How JWT tokens work (header.payload.signature)
-- What bcrypt hashing does (one-way, can't reverse)
-- How OAuth2 password flow works in FastAPI
+- Passwords hashed with bcrypt (pinned to 4.0.1 for passlib compatibility)
+- Protected routes with token verification
 
 ---
 
-### ✅ Phase 4 — NLP Engine
+### ✅ Phase 4 — NLP Clause Extraction
 **Status:** ✅ Done
 
-<img width="1756" height="992" alt="Nlp Engine" src="https://github.com/user-attachments/assets/fc1f57bd-e1f9-44cf-b9c3-0fbf8020ef77" />
-
-
-**What we did:**
-- Installed spaCy NLP library
-- Downloaded English language model (en_core_web_sm)
-- Built clause extractor using keyword matching + sentence segmentation
-- Each extracted clause gets a confidence score (0.0 to 1.0)
-- Built /nlp/demo endpoint with sample ISO 27001 text
-- Found 8 compliance clauses from sample text
-
-**Commands:**
-```bash
-pip install spacy
-python -m spacy download en_core_web_sm
-```
-
-**How NLP extraction works:**
-Input: "A set of policies shall be defined and approved by management."
-↓
-spaCy splits into sentences
-↓
-Each sentence checked for keywords: shall, must, should, ensure...
-↓
-Matched sentences = compliance clauses
-↓
-Confidence = 0.5 + (number of keywords × 0.1)
-↓
-Output: {clause_id, text, keywords, confidence: 0.60}
-
-**What we learned:**
-- How NLP sentence segmentation works
-- What keyword-based extraction means
-- How confidence scoring works
+- Installed spaCy with en_core_web_sm English model
+- Built clause extractor: sentence segmentation + 20-keyword vocabulary
+- Each clause assigned a confidence score
+- Built /nlp/extract and /nlp/demo endpoints
 
 ---
 
 ### ✅ Phase 5 — Mapping Engine
 **Status:** ✅ Done
 
-<img width="1756" height="992" alt="Mapping" src="https://github.com/user-attachments/assets/7ad41e57-78e3-466f-bfbb-aa557b19c3a8" />
-
-
-**What we did:**
-- Created ISO 27001 to NIST CSF mapping data (10 controls)
-- Each mapping has: source control, target control, confidence score, gap description
-- Built /mapping/stats API for compliance overview
-- Built /mapping/search API to find specific controls
-- Gap analysis: 7 full coverage, 3 partial coverage
-
-**Sample mapping:**
-```json
-{
-  "source": "ISO 27001 A.5.1 - Policies for information security",
-  "target": "NIST CSF GV.PO-01 - Organizational cybersecurity policy",
-  "confidence": 0.95,
-  "gap": null
-}
-```
-
-**Stats result:**
-- Total Controls: 10
-- Full Coverage: 7 (70%)
-- Partial Coverage: 3 (30%)
-- Average Confidence: 85.9%
-
-**What we learned:**
-- How rule-based mapping engines work
-- What gap analysis means in compliance
-- How confidence scoring guides audit decisions
+- Created ISO 27001 to NIST CSF mapping data (10 initial controls)
+- Built mapping API with stats, search, and seed-db endpoints
+- Confidence scoring and gap analysis implemented
 
 ---
 
 ### ✅ Phase 6 — React Frontend Dashboard
 **Status:** ✅ Done
 
-<img width="1756" height="992" alt="DashBoard" src="https://github.com/user-attachments/assets/b6ebbb8f-511a-42a1-9427-8b93b006fe02" />
-
-
-**What we did:**
-- Created React 18 + Vite frontend project
+- Created React 18 + Vite frontend
 - Built 3-tab dashboard: Dashboard, Mappings, NLP Engine
-- Dashboard tab: 4 stats cards + Pie chart + Bar chart
-- Mappings tab: Full ISO→NIST table with confidence badges
-- NLP Engine tab: Live clause extraction demo
 - Connected to FastAPI backend via axios
-- Fixed CORS to allow frontend-backend communication
-
-**Commands:**
-```bash
-npm create vite@latest frontend -- --template react
-cd frontend
-npm install axios recharts
-npm run dev
-```
-
-**What we learned:**
-- How React hooks work (useState, useEffect)
-- How axios makes HTTP requests to backend
-- How Recharts creates charts from API data
-- What CORS is and why browsers enforce it
+- Fixed CORS for frontend-backend communication
 
 ---
-## 🧪 Demo Workflow
 
-User uploads compliance framework or policy document
-NLP engine extracts regulatory clauses and keywords
-Mapping engine analyzes framework relationships
-Confidence scores are generated for mappings
-Compliance analytics are visualized in the dashboard
-RBAC-enabled users can review governance insights
-
----
 ### ✅ Phase 7 — Docker Deployment
 **Status:** ✅ Done
 
-**What we did:**
-- Created Dockerfile for backend (Python + spaCy)
-- Created Dockerfile for frontend (Node build + Nginx serve)
-- Updated docker-compose to run all 4 services together
-- Full project runs with one command
-
-**Command:**
-```bash
-docker-compose up --build
-```
-
-**How Docker works:**
-docker-compose up --build
-↓
-Builds backend image (Python + dependencies)
-Builds frontend image (React build + Nginx)
-Starts PostgreSQL container
-Starts Redis container
-All containers talk to each other
-↓
-Visit http://localhost:5174
-
-**What we learned:**
-- How Docker containers work
-- What multi-stage builds are (build then serve)
-- How Docker Compose networks services together
+- Created Dockerfile for backend and frontend
+- docker-compose runs all services together
+- Entire project deployable with one command
 
 ---
 
-## 📊 Final Progress
-
-| Phase | Feature | Status |
-|-------|---------|--------|
-| 0 | Git + GitHub | ✅ Done |
-| 1 | FastAPI Backend | ✅ Done |
-| 2 | PostgreSQL + Models | ✅ Done |
-| 3 | JWT Auth + RBAC | ✅ Done |
-| 4 | NLP Engine | ✅ Done |
-| 5 | Mapping Engine | ✅ Done |
-| 6 | React Dashboard | ✅ Done |
-| 7 | Docker Deployment | ✅ Done |
-
----
-
-## 🔮 Future Work
-
-- [ ] Add PCI-DSS and GDPR frameworks
-- [ ] AI-powered mapping recommendations
-- [ ] PDF compliance report export
-- [ ] Real-time monitoring dashboard
-- [ ] SIEM integration
-- [ ] AI semantic mapping
-- [ ]PDF ingestion
-- [ ]Multi-tenant governance
-- [ ]Risk scoring
-
----
-
-## 📄 License
-MIT License — see LICENSE file for details.
-
----
-## ©️ Copyright
-
-© 2026 Nahid Chowdhury & Shible Sadiqe
-
-All rights reserved.
-
-This project was developed as part of an advanced cybersecurity governance and compliance automation research initiative under PMICS, University of Dhaka.
-
-Unauthorized commercial redistribution or replication without permission is prohibited.
-
----
-
-## ⭐ If this helped you, give it a star on GitHub!
-
----
-
-### ✅ Phase 9 — Better NLP with TF-IDF
+### ✅ Phase 8 — Real ISO 27001 Data
 **Status:** ✅ Done
 
-**What I did:**
+- Imported real ISO 27001:2022 controls (26 controls)
+- Imported NIST CSF 2.0 controls (106 subcategories)
+- Average confidence: 92.3%
+- Category breakdown: Organizational, People, Physical, Technological
+
+---
+
+### ✅ Phase 9 — TF-IDF NLP Engine
+**Status:** ✅ Done
+
 - Implemented TF-IDF vectorization with scikit-learn
-- Added cosine similarity scoring against NIST reference texts
-- Combined TF-IDF score with keyword boost for final confidence
+- Added cosine similarity scoring against NIST CSF reference texts
+- Combined TF-IDF score with keyword-density boost
 - More accurate semantic matching than simple keyword detection
 
 ---
@@ -605,58 +307,58 @@ Unauthorized commercial redistribution or replication without permission is proh
 ### ✅ Phase 10 — PDF Report Export
 **Status:** ✅ Done
 
-**What I did:**
 - Built professional PDF report generator using ReportLab
-- Executive summary table with key metrics
-- Control category breakdown table
-- Complete mapping details table (all 26 controls)
-- Gap analysis section for partial coverage controls
-- Added "Download PDF Report" button on dashboard
-- One-click download directly from frontend
-
-**API Endpoints added:**
-| Endpoint | What it does |
-|----------|-------------|
-| GET /reports/download | Download PDF compliance report |
-| GET /reports/preview | Preview report summary |
+- Executive summary, mapping table, gap analysis in report
+- Added Download PDF Report button on dashboard
 
 ---
 
-### ⏳ Phase 11 — More Frameworks (PCI-DSS, GDPR)
-**Status:** ⏳ Pending
-
-### ⏳ Phase 12 — Final Polish + Presentation
-**Status:** ⏳ Pending
-
----
-
-### ✅ Phase 14 — Authentication UI + Database Persistence
+### ✅ Phase 11 — Multi-Framework Support (PCI-DSS)
 **Status:** ✅ Done
 
-**What I did:**
-- Built Login/Register UI connected to existing JWT backend
-- Added "Continue as Guest" option for quick demo access
+- Added PCI-DSS v4.0 controls (21 controls) mapped to NIST CSF
+- Built /frameworks API with per-framework and combined stats
+- Framework selector UI on dashboard
+- Total: 47 controls across ISO 27001 + PCI-DSS
+
+---
+
+### ✅ Phase 12-13 — Multi-File Upload + Live Dashboard
+**Status:** ✅ Done
+
+- POST /upload/analyze-multi accepts 2+ files at once
+- Combined NLP+TF-IDF mapping across all uploaded files
+- Live stats banner updates dashboard in real-time
+- Combined PDF report downloadable after upload
+- Upload & Auto-Map tab added to frontend
+
+---
+
+### ✅ Phase 14 — Login UI + Database Persistence
+**Status:** ✅ Done
+
+- Built Login/Register UI connected to JWT backend
+- Guest mode for quick demo access
 - Created UploadHistory and UploadClause database tables
-- Uploaded document analysis now persists in PostgreSQL (survives server restart)
-- Added /upload/history endpoint to view all past upload batches
-- live-stats and download-report now read from database, not memory
+- All upload analysis saved permanently in PostgreSQL
+- Upload history survives server restart
 
-**Database Tables added:**
-| Table | Purpose |
-|-------|---------|
-| upload_history | Stores each upload batch summary (files, confidence, stats) |
-| upload_clauses | Stores every individual extracted clause + its NIST mapping |
+---
 
-**API Endpoints added/updated:**
-| Endpoint | What it does |
-|----------|-------------|
-| POST /auth/register | Create account (used by frontend Login UI) |
-| POST /auth/login | Login, get JWT (used by frontend Login UI) |
-| GET /upload/history | List all past upload batches |
-| GET /upload/live-stats | Now reads latest batch from DB |
-| GET /upload/download-report | Now generates PDF from DB record |
+## 🔮 Future Work
 
-**What I learned:**
-- How to persist analysis results instead of keeping them in memory
-- How JWT tokens integrate with a React frontend (localStorage)
-- Why production systems need database-backed history, not just live state
+- [ ] BERT/DistilBERT semantic embeddings for higher accuracy
+- [ ] SHAP explainability for mapping decisions
+- [ ] GDPR and ISO 22301 framework support
+- [ ] OCR for scanned/image-based PDF documents
+- [ ] Upload history UI page in dashboard
+- [ ] RBAC enforcement on frontend (role-based button visibility)
+
+---
+
+## 📄 License
+MIT License — see LICENSE file for details.
+
+---
+
+## ⭐ If this helped you, give it a star on GitHub!
